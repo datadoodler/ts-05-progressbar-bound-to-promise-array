@@ -1,22 +1,36 @@
-angular.module('app').controller('tsCtrl', tsCtrl);
+angular.module('app').controller('ctrl1', ctrl1);
 
-tsCtrl.$inject=['promiseMaker'];
+ctrl1.$inject = ['promiseMaker','$q'];
 
-function tsCtrl(promiseMaker) {
-    var cb=function(d){
+function ctrl1(promiseMaker, $q) {
+    var cb = function (d) {
         alert(d)
     }
     var vm = this;
     vm.promises = [];
     vm.promises.push(promiseMaker.getVolley(cb));
     vm.name = 'kent';
+    var que=$q;
+    console.log('que1',que)
     vm.getMorePromises = function () {
-        vm.promises.push(promiseMaker.getVolley())
+console.log('que',que)
+        //vm.promises.push(promiseMaker.getVolley());
+        que.all(promiseMaker.getVolley()).then(function (value) {
+            console.log("$q.all SUCCESS", value)
+        });
+    };
+
+$q.all(vm.promises).then(function(val){
+    console.log('$q.all outside resolved',val)
+})
+
+    vm.denominator = vm.promises.length;
+
+    vm.getPromiseStatus = function () {
+        console.log('vm.promises[0];', vm.promises[0]);
+        return vm.promises[0];
+
     }
-
-
-
-
 
     //promiseMaker.processLotsOfData(['data','d1','d2','d3'])
     //    .then(function(result){

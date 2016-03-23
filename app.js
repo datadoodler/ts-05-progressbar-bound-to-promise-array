@@ -1,3 +1,1 @@
-/**
- * Created by kdm on 3/22/16.
- */
+angular.module('app',['ui.bootstrap']);
