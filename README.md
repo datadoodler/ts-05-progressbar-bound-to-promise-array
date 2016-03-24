@@ -11,3 +11,5 @@ The application is periodically caching images (asynchronously). Whenever images
 * angular-ui-bootstrap Version: 0.12.1 - 2015-02-20
 * bootstrap css (an custom edited version of v3.3.6)
 
+#### Demo
+http://datadoodler.github.io/ts-05-progressbar-bound-to-promise-array/
