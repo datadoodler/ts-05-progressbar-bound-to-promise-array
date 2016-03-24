@@ -1,48 +1,45 @@
+angular.module('app',['ui.bootstrap']);
+
 angular.module('app').controller('ctrl1', ctrl1);
 
-ctrl1.$inject = ['promiseMaker','$q'];
+ctrl1.$inject = ['promiseMaker', '$q'];
 
-function ctrl1(promiseMaker, $q) {
-    var cb = function (d) {
-        alert(d)
-    }
+function ctrl1(promiseMaker) {
     var vm = this;
     vm.promises = [];
-    vm.promises.push(promiseMaker.getVolley(cb));
-    vm.name = 'kent';
-    var que=$q;
-    console.log('que1',que)
-    vm.getMorePromises = function () {
-console.log('que',que)
-        //vm.promises.push(promiseMaker.getVolley());
-        que.all(promiseMaker.getVolley()).then(function (value) {
-            console.log("$q.all SUCCESS", value)
-        });
+    vm.showbar = false;
+    vm.originalPromiseCount = 0;
+
+    vm.getPromises = function () {
+        vm.originalPromiseCount = 0;
+        var newPromises = promiseMaker.getVolley();
+        vm.showbar = true;
+        vm.originalPromiseCount = newPromises.length;
+        newPromises.forEach(function (prom) {
+            pushPromise(prom)
+        })
     };
 
-$q.all(vm.promises).then(function(val){
-    console.log('$q.all outside resolved',val)
-})
+    vm.getPercentComplete = function () {
+        if (vm.promises.length === 0) {
+            return 0;
+        }
+        return 100 * (vm.originalPromiseCount - vm.promises.length) / vm.originalPromiseCount;
+    };
 
-    vm.denominator = vm.promises.length;
-
-    vm.getPromiseStatus = function () {
-        console.log('vm.promises[0];', vm.promises[0]);
-        return vm.promises[0];
-
+    function pushPromise(prom) {
+        prom.finally(function () {
+            console.log('and last but not least', prom);
+            removePromise(prom);
+        });
+        vm.promises.push(prom);
     }
 
-    //promiseMaker.processLotsOfData(['data','d1','d2','d3'])
-    //    .then(function(result){
-    //        // success
-    //        console.log('there has been success',result)
-    //    }, function(error){
-    //        // error
-    //        console.log('there has been error',error)
-    //    }, function(percentComplete){
-    //        console.log('there has been progress',percentComplete);
-    //        vm.progress = percentComplete;
-    //    });
+    function removePromise(prom) {
+        vm.promises.pop();
+        vm.promises.length === 0 ? vm.showbar = false : vm.showbar = true;
+        console.log('promises is now', this.promises);
+    }
 
     return vm;
 }
